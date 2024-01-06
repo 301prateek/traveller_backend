@@ -7,7 +7,7 @@ This is Backend Application of the Traveller app.
 
 ## Tech Stack
 
-**Client:** React, Redux
+**Client:** React, Redux, React-Router
 
 **Server:** Node, Express
 
