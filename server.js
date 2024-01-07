@@ -2,8 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const connectDB = require("./config/dbconfig");
-const hotelRouter = require("./routes/hotel.router");
+
 const hotelDataAddToDBRouter = require("./routes/dataimport.router");
+const categoriesDataAddToDBRouter = require("./routes/categoryimport.router");
+
+const hotelRouter = require("./routes/hotel.router");
+const categoryRouter = require("./routes/category.router");
 
 let corsOptions = {
   origin: [
@@ -27,9 +31,10 @@ app.get("/api", (req, res) => {
   res.send("Hello!");
 });
 
+app.use("/api/categoriesData", categoriesDataAddToDBRouter);
 app.use("/api/hoteldata", hotelDataAddToDBRouter);
-
 app.use("/api/hotels", hotelRouter);
+app.use("/api/category", categoryRouter);
 
 mongoose.connection.once("open", () => {
   console.log("Connected to database");
