@@ -8,6 +8,7 @@ const categoriesDataAddToDBRouter = require("./routes/categoryimport.router");
 
 const hotelRouter = require("./routes/hotel.router");
 const categoryRouter = require("./routes/category.router");
+const singleHotelRouter = require("./routes/singleHotel.router");
 
 let corsOptions = {
   origin: [
@@ -35,6 +36,7 @@ app.use("/api/categoriesData", categoriesDataAddToDBRouter);
 app.use("/api/hoteldata", hotelDataAddToDBRouter);
 app.use("/api/hotels", hotelRouter);
 app.use("/api/category", categoryRouter);
+app.use("/api/hotels", singleHotelRouter);
 
 mongoose.connection.once("open", () => {
   console.log("Connected to database");
