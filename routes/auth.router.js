@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../model/user.model");
+const CryptoJs = require("crypto-js");
 
 const router = express.Router();
 
@@ -10,7 +11,10 @@ router.route("/register").post(async (req, res) => {
     const userData = {
       username: username,
       phonenumber: phonenumber,
-      password: password,
+      password: CryptoJs.AES.encrypt(
+        password,
+        process.env.PASSWORD_SECRET_KEY
+      ).toString(),
       email: email,
     };
 
@@ -20,6 +24,28 @@ router.route("/register").post(async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error creating user" });
     console.log(err);
+  }
+});
+
+router.route("/login").post(async (req, res) => {
+  try {
+    const { phonenumber, password } = req.body;
+    const user = await User.findOne({ phonenumber: phonenumber });
+
+    !user && res.status(401).json({ message: "Invalid Mobile Number" });
+
+    const decodedPassword = CryptoJs.AES.decrypt(
+      user.password,
+      process.env.PASSWORD_SECRET_KEY
+    ).toString(CryptoJs.enc.Utf8);
+
+    decodedPassword !== password &&
+      res.status(401).json({ message: "Incorrect Password" });
+
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
   }
 });
 
