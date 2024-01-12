@@ -1,9 +1,10 @@
 const express = require("express");
 const Wishlist = require("../model/whislist.model");
+const verifyUser = require("../middleware/verifyUser");
 
 const router = express.Router();
 
-router.route("/").post(async (req, res) => {
+router.route("/").post(verifyUser, async (req, res) => {
   const newWishlist = new Wishlist(req.body);
   try {
     const savedWishlist = await newWishlist.save();
@@ -14,12 +15,24 @@ router.route("/").post(async (req, res) => {
   }
 });
 
-router.route("/").delete(async (req, res) => {
+router.route("/:id").delete(verifyUser, async (req, res) => {
   try {
     await Wishlist.findByIdAndDelete(req.param.id);
     res.json({ message: "Hotel Deleted from Wishlist" });
   } catch (error) {
     res.status(500).json({ message: "Could not delete hotel from wishlist" });
+  }
+});
+
+router.route("/").get(verifyUser, async (req, res) => {
+  try {
+    const wishlist = await Wishlist.find({});
+    wishlist
+      ? res.json(wishlist)
+      : res.json({ message: "No items found in wishlist" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
   }
 });
 
